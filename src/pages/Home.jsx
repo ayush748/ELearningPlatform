@@ -5,6 +5,12 @@ import HighlightText from '../components/core/HomePage/HighlightText';
 import CTAButton from '../components/core/HomePage/Button'
 import Banner from "../assets/Images/banner.mp4";
 import CodeBlocks from '../components/core/HomePage/CodeBlocks';
+import TimelineSection from '../components/core/HomePage/TimelineSection';
+import LearningLanguageSection from '../components/core/HomePage/LearningLanguageSection';
+import InstructorSection from '../components/core/HomePage/InstructorSection';
+import Footer from '../components/common/Footer'
+import ReviewSlider from '../components/common/ReviewSlider'
+import ExploreMore from '../components/core/HomePage/ExploreMore'
 // src\assets\Images\banner.mp4
 
 
@@ -120,7 +126,7 @@ const Home = () => {
             </div>
 
             {/* Explore Section */}
-            {/* <ExploreMore /> */}
+            <ExploreMore />
         </div>
 
         {/* Section 2 */}
@@ -163,21 +169,30 @@ const Home = () => {
             </div>
 
             {/* Timeline Section - Section 2 */}
-            {/* <TimelineSection /> */}
+            <TimelineSection />
 
             {/* Learning Language Section - Section 3 */}
-            {/* <LearningLanguageSection /> */}
+            <LearningLanguageSection />
             </div>
         </div>
-
         
 
-
         {/* Section 3 */}
+        <div className="relative mx-auto my-20 flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 bg-richblack-900 text-white">
+        {/* Become a instructor section */}
+            <InstructorSection />
+
+            {/* Reviws from Other Learner */}
+            <h1 className="text-center text-4xl font-semibold mt-8">
+            Reviews from other learners
+            </h1>
+            <ReviewSlider/>
+        </div>
         
 
 
         {/* Section 4 */}
+        <Footer />
     </div>
   )
 }
