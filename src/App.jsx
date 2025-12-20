@@ -3,10 +3,15 @@ import { Route, Routes } from 'react-router-dom'
 
 
 import Navbar from './components/common/Navbar'
+import OpenRoute from './components/core/Auth/OpenRoute'
 
 import Home from "./pages/Home"
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import ForgotPassword from './pages/ForgotPassword'
+import VerifyEmail from './pages/VerifyEmail'
+import UpdatePassword from "./pages/UpdatePassword";
+
 
 function App() {
   return (
@@ -18,20 +23,50 @@ function App() {
         <Route
           path="/signup"
           element={
-            // <OpenRoute>
+            <OpenRoute>
             <Signup />
-            // </OpenRoute>
+            </OpenRoute>
           }
         />
 
         <Route
           path="/login"
           element={
-            // <OpenRoute>
+            <OpenRoute>
             <Login />
-            // </OpenRoute>
+            </OpenRoute>
           }
         />
+
+
+        <Route
+          path="forgot-password"
+          element={
+            <OpenRoute>
+              <ForgotPassword />
+            </OpenRoute>
+          }
+        /> 
+
+        <Route
+          path="verify-email"
+          element={
+            <OpenRoute>
+              <VerifyEmail />
+            </OpenRoute>
+          }
+        />
+
+        <Route
+          path="update-password/:id"
+          element={
+            <OpenRoute>
+              <UpdatePassword />
+            </OpenRoute>
+          }
+        />
+
+
       </Routes>
     </div>
   )

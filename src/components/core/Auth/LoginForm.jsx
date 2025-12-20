@@ -1,15 +1,14 @@
 import { useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
-// import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-// import { login } from '../../../services/operations/authAPI'
+import { login } from '../../../services/operations/authAPI'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
 function LoginForm () { 
     const navigate = useNavigate()
-    // const dispatch = useDispatch()
-
+    const dispatch = useDispatch()
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -27,9 +26,7 @@ function LoginForm () {
 
     const handleOnSubmit = (e) => {
         e.preventDefault()
-        // dispatch(login(email, password, navigate))
-        console.log("Login data:", email, password)
-        // navigate("/")  // optional redirect
+        dispatch(login(email, password, navigate))
     }
 
     return (
@@ -47,7 +44,10 @@ function LoginForm () {
                     name='email'
                     value={email}
                     onChange={handleOnChange}
-                    placeholder='Enter email address'
+                    placeholder = 'Enter email address'
+                    style={{
+                        boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.18',
+                    }}
                     className='w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5'
                 />
             </label>
@@ -63,7 +63,10 @@ function LoginForm () {
                     value={password}
                     onChange={handleOnChange}
                     placeholder="Enter Password"
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-12 text-richblack-5"
+                    style={{
+                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18",
+                    }}
+                    className = "w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-12 text-richblack-5"
                 />
                 <span 
                     onClick={() => setShowPassword((prev) => !prev)}
@@ -77,7 +80,6 @@ function LoginForm () {
                         )
                     }
                 </span>
-
                 <Link to="/forgot-password">
                     <p className='mt-1 ml-auto max-w-max text-xs text-blue-100'>
                         Forgot Password

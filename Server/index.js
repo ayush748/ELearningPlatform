@@ -22,12 +22,22 @@ database.connect();
 //middleware
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: function(origin, callback) {
+            if (!origin) return callback(null, true); // allow non-browser requests (Postman)
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         credentials: true,
     })
-)
+);
+
 
 app.use(
     fileUpload({
