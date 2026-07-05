@@ -83,7 +83,7 @@ export async function getInstructorData(token) {
     )
 
     console.log("GET_INSTRUCTOR_DATA_API API RESPONSE...", response);
-    result = response?.data?.courses
+    result = response?.data
   }
   catch(error) {
     console.log("GET_INSTRUCTOR_API ERROR............", error);

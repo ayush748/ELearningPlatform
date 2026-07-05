@@ -136,28 +136,41 @@ exports.createCourse = async (req, res) => {
 // Edit Course Details
 exports.editCourse = async (req, res) => {
   try {
+    console.log("=== EDIT COURSE DEBUG ===");
+    console.log("req.body:", req.body);
+    console.log("req.files:", req.files);
+    console.log("req.user:", req.user);
+
     const { courseId } = req.body
+    console.log("courseId extracted:", courseId);
     const updates = req.body
+
+    console.log("Executing Course.findById");
     const course = await Course.findById(courseId)
+    console.log("Course.findById Result (null check):", course ? "Found" : "Null");
 
     if (!course) {
+      console.log("Exception point: Course not found");
       return res.status(404).json({ error: "Course not found" })
     }
 
     // If Thumbnail Image is found, update it
     if (req.files) {
-      console.log("thumbnail update")
+      console.log("Executing Thumbnail update");
       const thumbnail = req.files.thumbnailImage
+      console.log("Executing uploadImageToCloudinary");
       const thumbnailImage = await uploadImageToCloudinary(
         thumbnail,
         process.env.FOLDER_NAME
       )
+      console.log("uploadImageToCloudinary Result (secure_url):", thumbnailImage?.secure_url);
       course.thumbnail = thumbnailImage.secure_url
     }
 
+    console.log("Executing updates loop");
     // Update only the fields that are present in the request body
     for (const key in updates) {
-      if (updates.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(updates, key)) {
         if (key === "tag" || key === "instructions") {
           course[key] = JSON.parse(updates[key])
         } else {
@@ -166,8 +179,11 @@ exports.editCourse = async (req, res) => {
       }
     }
 
+    console.log("Executing course.save()");
     await course.save()
+    console.log("course.save() Success");
 
+    console.log("Executing Course.findOne and populate");
     const updatedCourse = await Course.findOne({
       _id: courseId,
     })
@@ -186,6 +202,7 @@ exports.editCourse = async (req, res) => {
         },
       })
       .exec()
+    console.log("Course.findOne populate Success");
 
     res.json({
       success: true,
@@ -193,7 +210,8 @@ exports.editCourse = async (req, res) => {
       data: updatedCourse,
     })
   } catch (error) {
-    console.error(error)
+    console.error("Exception point: Outer catch block caught error");
+    console.error("Stack trace:", error.stack);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -201,6 +219,7 @@ exports.editCourse = async (req, res) => {
     })
   }
 }
+
 
 // Get Course List
 exports.getAllCourses = async (req, res) => {

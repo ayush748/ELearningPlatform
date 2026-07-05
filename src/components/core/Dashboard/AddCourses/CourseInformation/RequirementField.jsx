@@ -22,7 +22,7 @@ export default function RequirementsField({
   }, [])
 
   useEffect(() => {
-    setValue(name, requirementsList)
+    setValue(name, requirementsList, { shouldValidate: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requirementsList])
 

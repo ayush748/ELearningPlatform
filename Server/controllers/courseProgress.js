@@ -29,7 +29,7 @@ exports.updateCourseProgress = async (req, res) => {
         })
         } else {
         // If course progress exists, check if the subsection is already completed
-        if (courseProgress.completedVideos.includes(subsectionId)) {
+        if (courseProgress.completedVideos.some(id => id.toString() === subsectionId.toString())) {
             return res.status(400).json({ error: "Subsection already completed" })
         }
 

@@ -42,6 +42,7 @@ function LoginForm () {
                     required
                     type='text'
                     name='email'
+                    autoComplete='email'
                     value={email}
                     onChange={handleOnChange}
                     placeholder = 'Enter email address'
@@ -60,6 +61,7 @@ function LoginForm () {
                     required
                     type={showPassword ? "text" : "password"}
                     name="password"
+                    autoComplete="current-password"
                     value={password}
                     onChange={handleOnChange}
                     placeholder="Enter Password"

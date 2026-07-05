@@ -23,7 +23,8 @@ export default function UpdatePassword() {
     const submitPasswordForm = async (data) => {
         // console.log('Password Data - ', data)
         try {
-            await changePassword(token, data)
+            // Inject confirmNewPassword to satisfy backend requirements since UI only has 2 inputs
+            await changePassword(token, { ...data, confirmNewPassword: data.newPassword })
         } catch(error) {
             console.log('ERROR MESSAGE - ', error.message)
         }
@@ -43,6 +44,7 @@ export default function UpdatePassword() {
                             type={showOldPassword ? 'text' : 'password'} 
                             name='oldPassword'
                             id='oldPassword'
+                            autoComplete='current-password'
                             placeholder='Enter Current Password'
                             className='form-style'
                             {...register('oldPassword', { required: true })}
@@ -71,6 +73,7 @@ export default function UpdatePassword() {
                             type={showNewPassword ? 'text' : 'password'}
                             name='newPassword'
                             id='newPassword'
+                            autoComplete='new-password'
                             placeholder='Enter New Password'
                             className='form-style'
                             {...register('newPassword', { required: true })}

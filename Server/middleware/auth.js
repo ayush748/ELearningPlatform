@@ -8,24 +8,38 @@ dotenv.config();
 // This function is used as middleware to authenticate user requests
 exports.auth = async (req, res, next) => {
 	try {
+		console.log("Authorization:", req.headers.authorization);
 		// Extracting JWT from request cookies, body or header
 		const token =
 			req.cookies.token ||
-			req.body.token ||
-			req.header("Authorization").replace("Bearer ", "");
+			req.body?.token ||
+			req.header("Authorization")?.replace("Bearer ", "");
 
 		// If JWT is missing, return 401 Unauthorized response
 		if (!token) {
+			console.log("Token missing - Returning 401");
 			return res.status(401).json({ success: false, message: `Token Missing` });
 		}
 
 		try {
 			// Verifying the JWT using the secret key stored in environment variables
 			const decode = jwt.verify(token, process.env.JWT_SECRET);
-			console.log(decode);
+			console.log("Decoded:", decode);
+			console.log("User ID:", decode.id);
+			
+			const user = await User.findById(decode.id);
+			console.log(user);
+			if (!user) {
+				console.log("User not found in database");
+				// Optionally return 401 if user is deleted, though original code just stored decode
+				// return res.status(401).json({ success: false, message: "User not found" });
+			}
+
 			// Storing the decoded JWT payload in the request object for further use
 			req.user = decode;
 		} catch (error) {
+			console.error("JWT Verification Error:", error.message);
+			console.log("JWT Verify catch block - Returning 401");
 			// If JWT verification fails, return 401 Unauthorized response
 			return res
 				.status(401)
@@ -35,6 +49,8 @@ exports.auth = async (req, res, next) => {
 		// If JWT is valid, move on to the next middleware or request handler
 		next();
 	} catch (error) {
+		console.error("Auth Middleware Outer Error:", error.message);
+		console.log("Auth Outer catch block - Returning 401");
 		// If there is an error during the authentication process, return 401 Unauthorized response
 		return res.status(401).json({
 			success: false,

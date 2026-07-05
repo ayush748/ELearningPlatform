@@ -44,6 +44,7 @@ const EditProfile = () => {
                         <input type="text" 
                             name='firstName'
                             id='firstName'
+                            autoComplete='given-name'
                             placeholder='Enter First Name'
                             className='form-style'
                             {...register("firstName", { required: true })}
@@ -63,6 +64,7 @@ const EditProfile = () => {
                             type="text" 
                             name='lastName'
                             id='lastName'
+                            autoComplete='family-name'
                             placeholder='Enter Last Name'
                             className='form-style'
                             {...register("lastName", { required: true })}

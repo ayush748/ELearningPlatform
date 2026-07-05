@@ -232,8 +232,15 @@ exports.signup = async (req, res) => {
             otp,
         } = req.body;
 
+        console.log("=== SIGNUP DEBUG ===");
+        console.log("Request Body:", req.body);
+        console.log("OTP from request:", otp);
+        console.log("Password:", password);
+        console.log("Confirm Password:", confirmPassword);
+
         // Required field check
         if (!firstName || !lastName || !email || !password || !confirmPassword || !otp) {
+            console.log("Validation Failed: Required fields missing");
             return res.status(403).json({
                 success: false,
                 message: "All Fields Are Required",
@@ -241,7 +248,9 @@ exports.signup = async (req, res) => {
         }
 
         // Password match check
+        console.log("Password Match Check:", password === confirmPassword);
         if (password !== confirmPassword) {
+            console.log("Validation Failed: Passwords do not match (400)");
             return res.status(400).json({
                 success: false,
                 message: "Password and Confirm Password Do Not Match",
@@ -250,7 +259,9 @@ exports.signup = async (req, res) => {
 
         // User exists?
         const existingUser = await User.findOne({ email });
+        console.log("Existing user lookup:", existingUser ? "Found" : "Not Found");
         if (existingUser) {
+            console.log("Validation Failed: User already exists (400)");
             return res.status(400).json({
                 success: false,
                 message: "User already exists. Please sign in.",
@@ -259,12 +270,16 @@ exports.signup = async (req, res) => {
 
         // Get latest OTP
         const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+        console.log("OTP from MongoDB:", response);
 
         if (response.length === 0) {
+            console.log("Validation Failed: No OTP found for email (400)");
             return res.status(400).json({ success: false, message: "The OTP is not valid" });
         }
 
+        console.log("OTP strict match check:", otp === response[0].otp, "Expected:", response[0].otp, "Got:", otp);
         if (otp !== response[0].otp) {
+            console.log("Validation Failed: OTP mismatch (400)");
             return res.status(400).json({ success: false, message: "The OTP is not valid" });
         }
 
@@ -378,17 +393,32 @@ exports.login = async (req, res) => {
 //changePassword
 exports.changePassword = async (req, res) => {
     try {
+        console.log("=== CHANGE PASSWORD DEBUG ===");
+        console.log("req.user:", req.user);
+        
         //Get user data from req.user
-        const userDetails = await User.findById(req.user.id);
+        console.log("Executing User.findById:", req.user?.id);
+        const userDetails = await User.findById(req.user?.id);
+        console.log("User.findById Result (null check):", userDetails ? "Found" : "Null");
+
+        if (!userDetails) {
+            console.log("Exception point: userDetails is null");
+        }
         
         //get oldPassword, newPassword, confirmPassword
         const {oldPassword, newPassword, confirmNewPassword} = req.body;
+        console.log("req.body keys:", Object.keys(req.body));
+        console.log("oldPassword:", oldPassword);
+        console.log("newPassword:", newPassword);
+        console.log("confirmNewPassword:", confirmNewPassword);
 
         //Validate old password
+        console.log("Executing bcrypt.compare");
         const isPasswordMatch = await bcrypt.compare(
             oldPassword, 
             userDetails.password
         );
+        console.log("bcrypt.compare Result:", isPasswordMatch);
 
         if(!isPasswordMatch) {
             //if old password does not match, return a 401 (unauthorized) error
@@ -410,15 +440,21 @@ exports.changePassword = async (req, res) => {
         }
 
         //update password
+        console.log("Executing bcrypt.hash");
         const encryptedPassword = await bcrypt.hash(newPassword, 10);
+        console.log("bcrypt.hash Result (length):", encryptedPassword?.length);
+
+        console.log("Executing User.findByIdAndUpdate");
         const updatedUserDetails = await User.findByIdAndUpdate(
             req.user.id,
             {password: encryptedPassword},
             {new: true}
         );
+        console.log("User.findByIdAndUpdate Result:", updatedUserDetails ? "Success" : "Null");
 
         //send notification email
         try {
+            console.log("Executing mailSender");
             const emailResponse = await mailSender(
                 updatedUserDetails.email,
                 passwordUpdated(
@@ -426,10 +462,10 @@ exports.changePassword = async (req, res) => {
                     `Password Updated Successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
                 )
             );
-            console.log('Email sent successfully: ', emailResponse.response);
+            console.log('mailSender executed successfully: ', emailResponse?.response);
         } catch (error) {
             //if there's an error sending the email, log the error and return a 500 (Internal Server Error) error
-            console.log('Error Occurred While Sending Email: ', error);
+            console.log('Exception point: mailSender failed', error);
             return res.status(500).json({
                 success: false,
                 message: 'Error Occurred While Sending Email',
@@ -444,7 +480,8 @@ exports.changePassword = async (req, res) => {
 
     } catch (error) {
         //if there's an error updating the password, log the error and return 500 (Internal Server Error) error
-        console.error('Error Occurred While Updating Password', error);
+        console.error('Exception point: Outer catch block caught error');
+        console.error('Stack trace:', error.stack);
         return res.status(500).json({
             success: false,
             message: 'Error Occurred While Updating Password',

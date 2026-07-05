@@ -59,6 +59,7 @@ export default function UpdatePassword() {
                   required
                   type={showPassword ? 'text' : 'password'}
                   name='password'
+                  autoComplete='new-password'
                   value={password}
                   onChange={handleOnChange}
                   placeholder='Enter Password'
@@ -85,6 +86,7 @@ export default function UpdatePassword() {
                   required
                   type={showConfirmPassword ? 'text' : 'password'}
                   name='confirmPassword'
+                  autoComplete='new-password'
                   value={confirmPassword}
                   onChange={handleOnChange}
                   placeholder='Confirm Password'

@@ -271,28 +271,61 @@ exports.getEnrolledCourses = async (req, res) => {
 
 exports.instructorDashboard = async (req, res) => {
   try {
-    const courseDetails = await Course.find({ instructor: req.user.id })
+    const instructorId = req.user.id;
 
-    const courseData = courseDetails.map((course) => {
-      const totalStudentsEnrolled = course.studentsEnrolled.length
-      const totalAmountGenerated = totalStudentsEnrolled * course.price
+    const courseData = await Course.aggregate([
+      { $match: { instructor: new mongoose.Types.ObjectId(instructorId) } },
+      {
+        $lookup: {
+          from: "ratingandreviews",
+          localField: "ratingAndReviews",
+          foreignField: "_id",
+          as: "reviews",
+        },
+      },
+      {
+        $addFields: {
+          totalStudentsEnrolled: { $size: "$studentsEnrolled" },
+          totalAmountGenerated: {
+            $multiply: [{ $size: "$studentsEnrolled" }, "$price"],
+          },
+          averageRating: {
+            $ifNull: [{ $avg: "$reviews.rating" }, 0],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          courseName: 1,
+          courseDescription: 1,
+          thumbnail: 1,
+          price: 1,
+          totalStudentsEnrolled: 1,
+          totalAmountGenerated: 1,
+          averageRating: { $round: ["$averageRating", 1] },
+        },
+      },
+    ]);
 
-      // Create a new object with the additional fields
-      const courseDataWithStats = {
-        _id: course._id,
-        courseName: course.courseName,
-        courseDescription: course.courseDescription,
-        // Include other course properties as needed
-        totalStudentsEnrolled,
-        totalAmountGenerated,
-      }
+    let totalRevenue = 0;
+    let totalStudents = 0;
+    let totalCourses = courseData.length;
 
-      return courseDataWithStats
-    })
+    courseData.forEach((course) => {
+      totalRevenue += course.totalAmountGenerated;
+      totalStudents += course.totalStudentsEnrolled;
+    });
 
-    res.status(200).json({ courses: courseData })
+    res.status(200).json({
+      success: true,
+      totalRevenue,
+      totalStudents,
+      totalCourses,
+      courses: courseData,
+    });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Server Error" })
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
-}
+};

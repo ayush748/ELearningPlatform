@@ -21,7 +21,6 @@ export function updateDisplayPicture(token, formData) {
                 UPDATE_DISPLAY_PICTURE_API,
                 formData,
                 {
-                    'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
                 }
             )
@@ -56,11 +55,11 @@ export function updateProfile(token, formData) {
             if(!response.data.success) {
                 throw new Error(response.data.message)
             }
-            const userImage = response.data.updatedUserDetails.image
-            ? response.data.updatedUserDetails.image
-            : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.updatedUserDetails.firstName} ${response.data.updatedUserDetails.lastName}`
+            const userImage = response.data.updatedUser.image
+            ? response.data.updatedUser.image
+            : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.updatedUser.firstName} ${response.data.updatedUser.lastName}`
             dispatch(
-                setUser({ ...response.data.updatedUserDetails, image: userImage })
+                setUser({ ...response.data.updatedUser, image: userImage })
             )
             toast.success('Profile Updated Successfully')
 
@@ -75,6 +74,8 @@ export function updateProfile(token, formData) {
 export async function changePassword(token, formData) {
     const toastId = toast.loading('Loading...')
     try {
+        console.log("Token before apiConnector in changePassword:", token);
+        console.log("Request Headers:", { Authorization: `Bearer ${token}` });
 
         const response = await apiConnector('POST', CHANGE_PASSWORD_API, formData, {
             Authorization: `Bearer ${token}`,

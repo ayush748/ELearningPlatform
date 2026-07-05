@@ -118,6 +118,7 @@ function SignupForm() {
                             required
                             type='text'
                             name='firstName'
+                            autoComplete='given-name'
                             value={firstName}
                             onChange={handleOnChange}
                             placeholder='Enter First Name'
@@ -135,6 +136,7 @@ function SignupForm() {
                             required
                             type='text'
                             name='lastName'
+                            autoComplete='family-name'
                             value={lastName}
                             onChange={handleOnChange}
                             placeholder='Enter Last Name'
@@ -153,6 +155,7 @@ function SignupForm() {
                         required
                         type='text'
                         name='email'
+                        autoComplete='email'
                         value={email}
                         onChange={handleOnChange}
                         placeholder='Enter Email Address'
@@ -171,6 +174,7 @@ function SignupForm() {
                             required
                             type={showPassword ? 'text' : 'password'}
                             name='password'
+                            autoComplete='new-password'
                             value={password}
                             onChange={handleOnChange}
                             placeholder='Enter Password'
@@ -198,6 +202,7 @@ function SignupForm() {
                             required
                             type={showConfirmPassword ? 'text' : 'password'}
                             name='confirmPassword'
+                            autoComplete='new-password'
                             value={confirmPassword}
                             onChange={handleOnChange}
                             placeholder='Confirm Password'

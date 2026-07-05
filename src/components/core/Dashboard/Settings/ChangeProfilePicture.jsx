@@ -4,6 +4,7 @@ import { FiUpload } from 'react-icons/fi'
 
 import IconBtn from '../../../common/IconBtn'
 import { updateDisplayPicture } from '../../../../services/operations/SettingsAPI'
+import { toast } from 'react-hot-toast'
 
 const ChangeProfilePicture = () => {
     const { token } = useSelector((state) => state.auth) 

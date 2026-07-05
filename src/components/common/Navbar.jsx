@@ -76,11 +76,6 @@ function Navbar() {
                         <p className="text-center">Loading...</p>
                       ) : subLinks.length > 0 ? (
                         subLinks
-                          .filter(
-                            (subLink) =>
-                              Array.isArray(subLink?.courses) &&
-                              subLink.courses.length > 0
-                          )
                           .map((subLink, i) => (
                             <Link
                               key={i}

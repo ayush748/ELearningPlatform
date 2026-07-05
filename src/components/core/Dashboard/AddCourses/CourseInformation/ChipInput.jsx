@@ -30,7 +30,7 @@ export default function ChipInput({
   }, [])
 
   useEffect(() => {
-    setValue(name, chips)
+    setValue(name, chips, { shouldValidate: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chips])
 

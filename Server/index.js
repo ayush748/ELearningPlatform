@@ -39,10 +39,11 @@ app.use(
 );
 
 
+const os = require('os');
 app.use(
     fileUpload({
         useTempFiles: true,
-        tempFileDir: "/tmp",
+        tempFileDir: os.tmpdir(),
     })
 )
 

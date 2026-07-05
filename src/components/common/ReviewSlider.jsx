@@ -16,8 +16,8 @@ import { Autoplay, FreeMode, Pagination } from "swiper/modules"
 
 
 // Get apiFunction and the endpoint
-// import { apiConnector } from "../../services/apiconnector"
-// import { ratingsEndpoints } from "../../services/apis"
+import { apiConnector } from "../../services/apiconnector"
+import { ratingsEndpoints } from "../../services/apis"
 
 function ReviewSlider() {
   const [reviews, setReviews] = useState([])
@@ -43,7 +43,7 @@ function ReviewSlider() {
         <Swiper
           slidesPerView={4}
           spaceBetween={25}
-          loop={true}
+          loop={reviews.length > 4}
           freeMode={true}
           autoplay={{
             delay: 2500,
