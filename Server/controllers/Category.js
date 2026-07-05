@@ -96,6 +96,7 @@ exports.categoryPageDetails = async (req, res) => {
         match: { status: "Published" },
       })
       .exec()
+    }
     console.log()
     // Get top-selling courses across all categories
     const allCategories = await Category.find()
