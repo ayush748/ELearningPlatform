@@ -65,13 +65,10 @@ exports.createCourse = async (req, res) => {
       })
     }
 
-    // Check if the tag given is valid
-    const categoryDetails = await Category.findById(category)
+    // Check if the category given is valid by name
+    let categoryDetails = await Category.findOne({ name: { $regex: new RegExp(`^${category}$`, 'i') } })
     if (!categoryDetails) {
-      return res.status(404).json({
-        success: false,
-        message: "Category Details Not Found",
-      })
+      categoryDetails = await Category.create({ name: category, description: category })
     }
     // Upload the Thumbnail to Cloudinary
     const thumbnailImage = await uploadImageToCloudinary(
@@ -107,7 +104,7 @@ exports.createCourse = async (req, res) => {
     )
     // Add the new course to the Categories
     const categoryDetails2 = await Category.findByIdAndUpdate(
-      { _id: category },
+      { _id: categoryDetails._id },
       {
         $push: {
           courses: newCourse._id,
@@ -165,6 +162,18 @@ exports.editCourse = async (req, res) => {
       )
       console.log("uploadImageToCloudinary Result (secure_url):", thumbnailImage?.secure_url);
       course.thumbnail = thumbnailImage.secure_url
+    }
+
+    if (updates.category) {
+      const categoryName = updates.category;
+      let categoryDetails = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') } })
+      if (!categoryDetails) {
+        categoryDetails = await Category.create({ name: categoryName, description: categoryName })
+      }
+      updates.category = categoryDetails._id;
+      
+      // Note: We might also want to move the course ID from the old category to the new one,
+      // but keeping it simple to match original edit behavior.
     }
 
     console.log("Executing updates loop");

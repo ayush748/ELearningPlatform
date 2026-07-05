@@ -5,10 +5,8 @@ import { HiOutlineCurrencyRupee } from "react-icons/hi"
 import { MdNavigateNext } from "react-icons/md"
 import { useDispatch, useSelector } from "react-redux"
 
-import {
   addCourseDetails,
   editCourseDetails,
-  fetchCourseCategories,
 } from "../../../../../services/operations/courseDetailsAPI"
 import { setCourse, setStep } from "../../../../../slices/courseSlice"
 import { COURSE_STATUS } from "../../../../../utils/constants"
@@ -30,18 +28,8 @@ export default function CourseInformationForm() {
   const { token } = useSelector((state) => state.auth)
   const { course, editCourse } = useSelector((state) => state.course)
   const [loading, setLoading] = useState(false)
-  const [courseCategories, setCourseCategories] = useState([])
 
   useEffect(() => {
-    const getCategories = async () => {
-      setLoading(true)
-      const categories = await fetchCourseCategories()
-      if (categories.length > 0) {
-        // console.log("categories", categories)
-        setCourseCategories(categories)
-      }
-      setLoading(false)
-    }
     // if form is in edit mode
     if (editCourse) {
       // console.log("data populated", editCourse)
@@ -50,11 +38,10 @@ export default function CourseInformationForm() {
       setValue("coursePrice", course.price)
       setValue("courseTags", course.tag)
       setValue("courseBenefits", course.whatYouWillLearn)
-      setValue("courseCategory", course.category)
+      setValue("courseCategory", course.category?.name || course.category)
       setValue("courseRequirements", course.instructions)
       setValue("courseImage", course.thumbnail)
     }
-    getCategories()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -67,7 +54,7 @@ export default function CourseInformationForm() {
       currentValues.coursePrice !== course.price ||
       currentValues.courseTags.toString() !== course.tag.toString() ||
       currentValues.courseBenefits !== course.whatYouWillLearn ||
-      (currentValues.courseCategory && currentValues.courseCategory._id) !== (course.category && course.category._id) ||
+      currentValues.courseCategory !== (course.category?.name || course.category) ||
       currentValues.courseRequirements.toString() !==
         course.instructions.toString() ||
       currentValues.courseImage !== course.thumbnail
@@ -107,7 +94,7 @@ export default function CourseInformationForm() {
         if (currentValues.courseBenefits !== course.whatYouWillLearn) {
           formData.append("whatYouWillLearn", data.courseBenefits)
         }
-        if ((currentValues.courseCategory && currentValues.courseCategory._id) !== (course.category && course.category._id)) {
+        if (currentValues.courseCategory !== (course.category?.name || course.category)) {
           formData.append("category", data.courseCategory)
         }
         if (
@@ -225,22 +212,12 @@ export default function CourseInformationForm() {
         <label className="text-sm text-richblack-5" htmlFor="courseCategory">
           Course Category <sup className="text-pink-200">*</sup>
         </label>
-        <select
-          {...register("courseCategory", { required: true })}
-          defaultValue=""
+        <input
           id="courseCategory"
+          placeholder="Enter Course Category"
+          {...register("courseCategory", { required: true })}
           className="form-style w-full"
-        >
-          <option value="" disabled>
-            Choose a Category
-          </option>
-          {!loading &&
-            courseCategories?.map((category, indx) => (
-              <option key={indx} value={category?._id}>
-                {category?.name}
-              </option>
-            ))}
-        </select>
+        />
         {errors.courseCategory && (
           <span className="ml-2 text-xs tracking-wide text-pink-200">
             Course Category is required
