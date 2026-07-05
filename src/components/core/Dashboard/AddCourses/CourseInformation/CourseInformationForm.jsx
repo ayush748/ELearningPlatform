@@ -5,6 +5,7 @@ import { HiOutlineCurrencyRupee } from "react-icons/hi"
 import { MdNavigateNext } from "react-icons/md"
 import { useDispatch, useSelector } from "react-redux"
 
+import {
   addCourseDetails,
   editCourseDetails,
 } from "../../../../../services/operations/courseDetailsAPI"
