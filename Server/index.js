@@ -65,8 +65,10 @@ app.get("/", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`App is running at ${PORT}`);
-})
+if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+        console.log(`App is running at ${PORT}`);
+    });
+}
 
 module.exports = app;
