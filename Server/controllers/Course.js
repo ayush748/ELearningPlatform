@@ -54,9 +54,8 @@ exports.createCourse = async (req, res) => {
       status = "Draft"
     }
     // Check if the user is an instructor
-    const instructorDetails = await User.findById(userId, {
-      accountType: "Instructor",
-    })
+    const instructorDetails = await User.findById(userId)
+
 
     if (!instructorDetails) {
       return res.status(404).json({
