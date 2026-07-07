@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchInstructorCourses } from '../../../../services/operations/courseDetailsAPI';
 import { getInstructorData } from '../../../../services/operations/profileAPI';
 import InstructorChart from './InstructorChart';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
 
 export default function Instructor() {
@@ -11,11 +11,13 @@ export default function Instructor() {
   const { user } = useSelector((state) => state.profile);
   const [loading, setLoading] = useState(false);
   const [instructorData, setInstructorData] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     ;(async () => {
       setLoading(true);
-      const instructorApiData = await getInstructorData(token);
+      const instructorApiData = await getInstructorData(token, dispatch, navigate);
       if (instructorApiData) {
         setInstructorData(instructorApiData);
       }

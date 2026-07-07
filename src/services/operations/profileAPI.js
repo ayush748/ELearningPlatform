@@ -37,7 +37,7 @@ export function getUserDetails(token, navigate) {
   }
 }
 
-export async function getUserEnrolledCourses(token) {
+export async function getUserEnrolledCourses(token, dispatch, navigate) {
   console.log("GETUserEnrolledCourses TOKEN: ", token);
   const toastId = toast.loading("Loading...")
   let result = []
@@ -52,10 +52,6 @@ export async function getUserEnrolledCourses(token) {
       }
     )
     console.log("AFTER Calling BACKEND API FOR ENROLLED COURSES");
-    // console.log(
-    //   "GET_USER_ENROLLED_COURSES_API API RESPONSE............",
-    //   response
-    // )
 
     if (!response.data.success) {
       throw new Error(response.data.message)
@@ -64,12 +60,17 @@ export async function getUserEnrolledCourses(token) {
   } catch (error) {
     console.log("GET_USER_ENROLLED_COURSES_API API ERROR............", error)
     toast.error("Could Not Get Enrolled Courses")
+    
+    // Log out user if token has expired or is invalid
+    if (error.response?.status === 401) {
+      dispatch(logout(navigate))
+    }
   }
   toast.dismiss(toastId)
   return result
 }
 
-export async function getInstructorData(token) {
+export async function getInstructorData(token, dispatch, navigate) {
   const toastId = toast.loading("Loading...");
   let result = [];
   try{
@@ -88,6 +89,11 @@ export async function getInstructorData(token) {
   catch(error) {
     console.log("GET_INSTRUCTOR_API ERROR............", error);
     toast.error("Could not Get Instructor Data")
+
+    // Log out user if token has expired or is invalid
+    if (error.response?.status === 401) {
+      dispatch(logout(navigate))
+    }
   }
   toast.dismiss(toastId);
   return result;

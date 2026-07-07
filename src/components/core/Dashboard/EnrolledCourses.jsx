@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import ProgressBar from '@ramonak/react-progress-bar'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
@@ -10,12 +10,13 @@ const EnrolledCourses = () => {
 
   const{ token } = useSelector((state) => state.auth)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const [enrolledCourses, setEnrolledCourses] = useState(null)
 
   const getEnrolledCourses = async () => {
     try {
-      const res = await getUserEnrolledCourses(token)
+      const res = await getUserEnrolledCourses(token, dispatch, navigate)
       setEnrolledCourses(res)
       
     } catch (error) {
